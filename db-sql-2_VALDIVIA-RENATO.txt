@@ -41,12 +41,15 @@ Parte Query con JOIN:
 		where departments.name ="Dipartimento di Matematica";
 
 	7. BONUS: Selezionare per ogni studente quanti tentativi d’esame ha sostenuto per superare ciascuno dei suoi esami
-		select distinct count(exam_student.vote), students.name, students.surname, courses.name;v
-		from exam_student 
-		join students on students.id = exam_student.student_id 
+		select  count(exam_student.vote)as num_tentativi, students.name, students.surname, courses.name
+		from students 
+		join exam_student on students.id = exam_student.student_id 
 		join exams on exam_student.exam_id = exams.id 
 		join courses on courses.id = exams.course_id
-		where exam_student.vote <= 18; TO FINISH!!!!!!!!!!!!
+		where exam_student.vote >= 0
+		group by courses.name, students.name, students.surname
+		order by num_tentativi desc ;
+
 
 	
 Parte Query con GROUP BY:
