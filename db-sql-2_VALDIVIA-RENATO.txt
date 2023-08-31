@@ -1,0 +1,73 @@
+Parte Query con JOIN:
+	1. Selezionare tutti gli studenti iscritti al Corso di Laurea in Economia
+		select students.id, students.name, students.surname, students.date_of_birth, students.enrolment_date  
+		from students 
+		join degrees on students.degree_id = degrees.id 
+		where degrees.name = "Corso di Laurea in Economia"
+
+	2. Selezionare tutti i Corsi di Laurea Magistrale del Dipartimento di Neuroscienze
+		select degrees.name as "corsi_dipartimento_neuroscienze"
+		from departments 
+		join degrees on degrees.department_id = departments.id 
+		where departments.name = "Dipartimento di Neuroscienze" and degrees.level = "magistrale"
+
+	3. Selezionare tutti i corsi in cui insegna Fulvio Amato (id=44)
+		select courses.name  as "nome_corso"
+		from course_teacher 
+		join teachers on course_teacher.teacher_id = teachers.id 
+		join courses on course_teacher.course_id = courses.id 
+		where teachers.name="Fulvio" and teachers.surname ="Amato";
+
+
+	4. Selezionare tutti gli studenti con i dati relativi al corso di laurea a cui sono iscritti e il relativo dipartimento, in ordine alfabetico per cognome e nome
+		select students.id, students.surname, students.name, degrees.name, departments.name 
+		from degrees 
+		join students on students.degree_id  = degrees.id 
+		join departments on departments.id = degrees.department_id 
+		order by students.surname asc ;
+
+	5. Selezionare tutti i corsi di laurea con i relativi corsi e insegnanti
+		select degrees.name, courses.name, teachers.name, teachers.surname 
+		from degrees 
+		join courses on courses.degree_id = degrees.id 
+		join teachers on teachers.id = courses.id;
+
+	6. Selezionare tutti i docenti che insegnano nel Dipartimento di Matematica (54)
+		select distinct teachers.id, teachers.name, teachers.surname 
+		from teachers 
+		join courses on courses.id = teachers.id 
+		join degrees on degrees.department_id = courses.degree_id 
+		join departments on departments.id =degrees.department_id 
+		where departments.name ="Dipartimento di Matematica";
+
+	7. BONUS: Selezionare per ogni studente quanti tentativi d’esame ha sostenuto per superare ciascuno dei suoi esami
+		select distinct count(exam_student.vote), students.name, students.surname, courses.name;v
+		from exam_student 
+		join students on students.id = exam_student.student_id 
+		join exams on exam_student.exam_id = exams.id 
+		join courses on courses.id = exams.course_id
+		where exam_student.vote <= 18; TO FINISH!!!!!!!!!!!!
+
+	
+Parte Query con GROUP BY:
+	1. Contare quanti iscritti ci sono stati ogni anno
+		select count(id), year(enrolment_date)
+		from students 
+		group by year(enrolment_date);
+
+	2. Contare gli insegnanti che hanno l'ufficio nello stesso edificio
+		select count(id), office_address 
+		from teachers 
+		group by office_address ;
+
+	3. Calcolare la media dei voti di ogni appello d'esame
+		select avg(exam_student.vote), exams.`date`  
+		from exam_student
+		join exams on exam_student.exam_id =exams.id 
+		group by exams.`date` 
+
+	4. Contare quanti corsi di laurea ci sono per ogni dipartimento
+		select count(degrees.id), departments.name 
+		from degrees 
+		join departments on degrees.department_id = departments.id 
+		group by departments.name;
